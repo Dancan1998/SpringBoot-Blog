@@ -22,26 +22,33 @@ public class PostController {
 
     // create blog post endpoint
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO){
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
         return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
     }
 
     // get all posts
     @GetMapping
-    public List<PostDTO> getAllPosts(){
-        return  postService.getAllPosts();
+    public List<PostDTO> getAllPosts() {
+        return postService.getAllPosts();
     }
 
     // get post by id
     @GetMapping("/{id}")
-    public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id){
+    public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id) {
         return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
 
     // update post
     @PutMapping("/{id}")
-    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO, @PathVariable(name = "id")  long id){
+    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO, @PathVariable(name = "id") long id) {
         PostDTO postResponse = postService.updatePost(postDTO, id);
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
+    }
+
+    //delete post
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {
+        postService.deletePost(id);
+        return new ResponseEntity<>("Post entity deleted successfully", HttpStatus.OK);
     }
 }
