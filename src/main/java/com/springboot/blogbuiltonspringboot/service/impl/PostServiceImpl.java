@@ -8,6 +8,7 @@ import com.springboot.blogbuiltonspringboot.repository.PostRepository;
 import com.springboot.blogbuiltonspringboot.service.PostService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,9 +44,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getAllPosts(int pageNo, int pageSize) {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy) {
         // create a pageable instance
-        PageRequest pageable = PageRequest.of(pageNo, pageSize);
+        PageRequest pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
         Page<Post> posts = postRepository.findAll(pageable);
 
@@ -66,14 +67,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDTO getPostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Post", "id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return mapToDTO(post);
     }
 
     @Override
     public PostDTO updatePost(PostDTO postDTO, long id) {
         //get post by id from the database
-        Post post = postRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Post", "id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
@@ -87,7 +88,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deletePost(long id) {
-        Post post = postRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Post", "id", id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
     }
 
