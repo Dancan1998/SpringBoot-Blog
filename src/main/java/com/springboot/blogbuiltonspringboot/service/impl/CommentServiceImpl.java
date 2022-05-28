@@ -2,11 +2,13 @@ package com.springboot.blogbuiltonspringboot.service.impl;
 
 import com.springboot.blogbuiltonspringboot.entity.Comment;
 import com.springboot.blogbuiltonspringboot.entity.Post;
+import com.springboot.blogbuiltonspringboot.exception.BlogAPIException;
 import com.springboot.blogbuiltonspringboot.exception.ResourceNotFoundException;
 import com.springboot.blogbuiltonspringboot.payloadDTO.CommentDTO;
 import com.springboot.blogbuiltonspringboot.repository.CommentRepository;
 import com.springboot.blogbuiltonspringboot.repository.PostRepository;
 import com.springboot.blogbuiltonspringboot.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class CommentServiceImpl implements CommentService {
 
         // find post by id
         Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new ResourceNotFoundException("Post", "id", postId));
+                () -> new ResourceNotFoundException("Post", "id", postId));
 
         // once found a  post, set the post to the comment entity
         comment.setPost(post);
@@ -49,8 +51,25 @@ public class CommentServiceImpl implements CommentService {
         return comments.stream().map(comment -> mapToDTO(comment)).collect(Collectors.toList());
     }
 
+    @Override
+    public CommentDTO getCommentById(long postId, long commentId) {
+        // find post by id
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new ResourceNotFoundException("Post", "id", postId));
+
+        // find comment by id
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if (!comment.getPost().getId().equals(post.getId())) {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to this post");
+        }
+
+        return mapToDTO(comment);
+    }
+
     // map entity to DTo
-    private CommentDTO mapToDTO(Comment comment){
+    private CommentDTO mapToDTO(Comment comment) {
         CommentDTO commentDTO = new CommentDTO();
 
         commentDTO.setId(comment.getId());
@@ -62,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     // map DTO to entity
-    private Comment mapToEntity(CommentDTO commentDTO){
+    private Comment mapToEntity(CommentDTO commentDTO) {
         Comment comment = new Comment();
 
         comment.setId(commentDTO.getId());
