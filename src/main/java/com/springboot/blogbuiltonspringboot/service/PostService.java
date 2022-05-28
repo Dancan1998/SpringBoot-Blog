@@ -3,7 +3,6 @@ package com.springboot.blogbuiltonspringboot.service;
 import com.springboot.blogbuiltonspringboot.payloadDTO.PostDTO;
 import com.springboot.blogbuiltonspringboot.payloadDTO.PostResponse;
 
-import java.util.List;
 
 public interface PostService {
     PostDTO createPost(PostDTO postDTO);
