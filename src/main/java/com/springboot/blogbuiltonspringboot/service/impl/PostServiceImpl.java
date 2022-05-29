@@ -6,6 +6,7 @@ import com.springboot.blogbuiltonspringboot.payloadDTO.PostDTO;
 import com.springboot.blogbuiltonspringboot.payloadDTO.PostResponse;
 import com.springboot.blogbuiltonspringboot.repository.PostRepository;
 import com.springboot.blogbuiltonspringboot.service.PostService;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 //annotate with @service annotation for spring service class
 @Service
 public class PostServiceImpl implements PostService {
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final ModelMapper mapper;
 
     // one constructor in the class omit @auto wired annotation
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
+        this.mapper = mapper;
         this.postRepository = postRepository;
     }
 
@@ -97,24 +100,27 @@ public class PostServiceImpl implements PostService {
 
     //convert entity into DTO
     private PostDTO mapToDTO(Post post) {
-        PostDTO postDTO = new PostDTO();
 
-        postDTO.setTitle(post.getTitle());
-        postDTO.setId(post.getId());
-        postDTO.setContent(post.getContent());
-        postDTO.setDescription(post.getDescription());
-
+        PostDTO postDTO = mapper.map(post, PostDTO.class);
         return postDTO;
+        // manual code without the modelMapper
+//        PostDTO postDTO = new PostDTO();
+//        postDTO.setTitle(post.getTitle());
+//        postDTO.setId(post.getId());
+//        postDTO.setContent(post.getContent());
+//        postDTO.setDescription(post.getDescription());
+
+
     }
 
     // convert DTO into entity
     private Post mapToEntity(PostDTO postDTO) {
-        Post post = new Post();
-
-        post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent());
-        post.setDescription(postDTO.getDescription());
-
+        Post post = mapper.map(postDTO, Post.class);
         return post;
+        // manual code without modelMapper
+//        Post post = new Post();
+//        post.setTitle(postDTO.getTitle());
+//        post.setContent(postDTO.getContent());
+//        post.setDescription(postDTO.getDescription());
     }
 }
