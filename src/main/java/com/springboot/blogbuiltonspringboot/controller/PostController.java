@@ -9,14 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 // controller class should be annotated with @rest controller annotation
 @RestController
 // base url endpoint
 @RequestMapping("/api/posts")
 public class PostController {
-    private PostService postService;
+    private final PostService postService;
 
     // generating a class with one constructor can omit @auto wired annotation
     public PostController(PostService postService) {
